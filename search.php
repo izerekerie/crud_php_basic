@@ -1,6 +1,10 @@
 <?php
   include 'connect.php';
- 
+  if(isset($_POST['search'])){
+
+    $term=$_POST['searchterm'];
+    $sql = mysqli_query($connect, "SELECT * FROM users WHERE name LIKE '%$term' ");
+  }
   ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -14,36 +18,20 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css" integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
  crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
-<style>
-  td{
-    padding:10px;
-  }
-  #profile{
-    width:70px;
-    height:70px;
-    border-radius:50px;
-    object-fit: fill;
-  }
-
-
-  
-</style>
 <body>
-    <form method="GET" class="container">
+    <form method="post" class="container">
       
     <div class="row">
     <div class="col-10 my-3">
         <div class="input-group my-2">
        
 
-           <input type="text" name= "searchterm" value="<?php if(isset($_GET['search'])){echo $_GET['search']; } ?>" class="form-control">
+           <input type="text" name= "searchterm" class="form-control">
            <div class="input-group-prepend">
                 <span class="input-group-text  bg-light">
-                  <button  type="submit">
+                <a href="search.php">
                 <i class="text-primary fa-solid fa-magnifying-glass"></i>
-                </button>
-                  
-              
+                </a>
 
             </span>
             </div>
@@ -74,45 +62,35 @@
   </thead>
   <tbody>
   <?php
+$sql=" select  * from `users`";
+$result=mysqli_query($con,$sql);
+if($result){
+  while( $row=mysqli_fetch_assoc($result)){
+      $id=$row['id'];
+      $name=$row['name'];
+      $email=$row['email'];
+      $mobile=$row['mobile'];
+      $password=$row['password'];
 
-if(isset($_GET['searchterm'])){
-
-  $searchterm = $_GET['searchterm'];
-  $query = "SELECT * FROM users WHERE CONCAT(name,email) LIKE '%$searchterm%' ";
-  $result = mysqli_query($con, $query);
-
-}else{
-  $sql=" select  * from `users`";
-  $result=mysqli_query($con,$sql);
-}
-  if($result){
-    while($row=mysqli_fetch_assoc($result)){
-        $id=$row['id'];
-        $name=$row['name'];
-        $email=$row['email'];
-        $mobile=$row['mobile'];
-        $password=$row['password'];
-        $filename=$row['filename'];
-        echo '
-        <tr class="my-3">
-        <th scope="row">'.$id.'</th>
-        <td><img id="profile" src="uploads/'.$filename.'"/></td>
-        <td>'.$name.'</td>
-        <td>'.$email.'</td>
-        <td>'.$mobile.'</td>
-        <td>
-        <button class="btn btn-primary my-2 mx-2" class="">
-          <a href="update.php?updateid='.$id.'" class="text-light">Update</a>    
-     </button>
-     <button class="btn btn-danger my-2 mx-2" class="">
-          <a href="delete.php?deleteid='.$id.'" class="text-light">Delete</a>    
-     </button>
-        </td>
-      </tr>
-        
-        ';
-    }
+      echo '
+      <tr class="my-3">
+      <th scope="row">'.$id.'</th>
+      <td>'.$name.'</td>
+      <td>'.$email.'</td>
+      <td>'.$mobile.'</td>
+      <td>
+      <button class="btn btn-primary my-2 mx-2" class="">
+        <a href="update.php?updateid='.$id.'" class="text-light">Update</a>    
+   </button>
+   <button class="btn btn-danger my-2 mx-2" class="">
+        <a href="delete.php?deleteid='.$id.'" class="text-light">Delete</a>    
+   </button>
+      </td>
+    </tr>
+      
+      ';
   }
+}
 
   ?>
    
