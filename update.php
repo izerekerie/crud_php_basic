@@ -9,22 +9,30 @@ $name=$row['name'];
 $email=$row['email'];
 $mobile=$row['mobile'];
 $password=$row['password'];
+$old_filename=$row['filename'];
 
 if(isset($_POST['submit'])){
     $name=$_POST['name'];
     $email=$_POST['email'];
     $mobile=$_POST['mobile'];
     $password=$_POST['password'];
-
+    $filename=$_FILES['profile']['name'];
+    $temp_name=$_FILES['profile']['tmp_name'];
     $sql="update `users` set id=$id,name='$name',
-    email='$email',mobile='$mobile',password='$password' where id=$id ";
-
+    email='$email',mobile='$mobile',password='$password',filename='$filename' where id=$id ";
     $result=mysqli_query($con,$sql);
-    if($result){
+    // unlink('uploads/'.$old_filename);
+    if(move_uploaded_file($temp_name,'uploads/'.$filename)){
+      if($result){
         header('location:display.php');
     }else{
         die(mysqli_error($con));
     }
+    }else{
+      $msg = "Failed to upload image";
+}
+    
+  
 }
 
 ?>
@@ -44,7 +52,7 @@ if(isset($_POST['submit'])){
   </head>
   <body>
    <div class="container my-5">
-   <form method="post">
+   <form method="post" enctype="multipart/form-data">
   <div class="form-group my-3">
     <label for="name">Name</label>
     <input type="text" name="name" class="form-control my-2" id="" placeholder="Enter name"
@@ -73,7 +81,10 @@ if(isset($_POST['submit'])){
     >
      
 </div>
-
+<div class="form-group my-3">
+    <label for="exampleInputPassword1">picture</label>
+    <input type="file" name="profile" class="form-control my-2" accept="image/*">
+  </div>
   <button type="submit" name="submit" class="btn btn-primary">Submit</button>
 </form>
    </div>
